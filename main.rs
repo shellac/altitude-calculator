@@ -15,7 +15,7 @@ fn main() {
 	};
 
 	let bytes = match file.read_to_end() {
-		Ok(b) => ~b,
+		Ok(b) => b,
     	Err(e) => fail!("read error: {}", e)
 	};
 
@@ -29,8 +29,15 @@ fn main() {
 
 	let size = side as uint;
 
-	let heights: Vec<Vec<&u8>> = Vec::from_fn(size, |idy| 
-		Vec::from_fn(size, |idx| bytes.get(idy * size + idx * 2))
-	);
+	// Break this out, otherwise we get bytes lifetime issue...
+	let f = |z| bytes.get(z);
+
+	let heights: Vec<Vec<&u8>> = Vec::from_fn(size, |idy| { 
+		Vec::from_fn(size, |idx| f(idy * size + idx * 2))
+	});
+
+	println!("Done! {:?}", heights);
+
+	println!("Value: {}", heights.get(1).get(1));
 
 }
