@@ -41,10 +41,6 @@ fn main() {
 		.flat_map(|&el| toPixel(el))
 		.collect();
 
-	for i in image.iter() {
-		println!("{}", i);
-	}
-
 	match exportpng::to_file(
 		"test.png",
 		heightMap.width as u32,
