@@ -1,9 +1,9 @@
 use std::vec::Vec;
 
 pub struct Vec2D<T> {
-	width: uint,
-	height: uint,
-	content: ~Vec<T>
+	pub width: uint,
+	pub height: uint,
+	pub content: ~Vec<T>
 }
 
 impl<T> Vec2D<T> {

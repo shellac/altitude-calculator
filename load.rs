@@ -1,3 +1,5 @@
+extern crate exportpng;
+
 use std::io::File;
 
 mod vec2d;
@@ -32,9 +34,32 @@ fn main() {
 		.map(|a| toSignedShort(a[0], a[1]))
 		.collect();
 
-	let x = vec2d::Vec2D::make(side, side, ~newBytes);
+	let heightMap = vec2d::Vec2D::make(side, side, ~newBytes);
 
-	println!("Val: {}", x.get(0,0));
+	let image: Vec<u8> = heightMap.content
+		.iter()
+		.flat_map(|&el| toPixel(el))
+		.collect();
+
+	for i in image.iter() {
+		println!("{}", i);
+	}
+
+	match exportpng::to_file(
+		"test.png",
+		heightMap.width as u32,
+		heightMap.height as u32,
+		image.as_slice()
+		) {
+        Ok(_) => println!("Saved!"),
+        Err(reason) => println!("Could not save because: {}", reason),
+    }
+}
+
+// For flat mapping from signed ints to iterator over pixel vals
+fn toPixel(val: i16) -> std::vec::MoveItems<u8> {
+	let pix = vec!(val as u8, val as u8, val as u8, 255u8);
+	pix.move_iter()
 }
 
 fn toSignedShort(msb: u8, lsb: u8) -> i16 {
